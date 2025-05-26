@@ -8,6 +8,9 @@ public class PlayerMovement : MonoBehaviour
     private float moveSpeed;
     public float walkSpeed;
 
+    public float dashSpeed;
+    public float dashSpeedChangeFactor;   
+
     public float groundDrag;
 
     [Header("Jumping")]
@@ -17,11 +20,10 @@ public class PlayerMovement : MonoBehaviour
     bool readyToJump;
 
     public Ability currentAbility;
-    bool readyToUseAbility;
+    [HideInInspector] public bool readyToUseAbility;
 
     [Header("Keys")]
     public KeyCode jumpKey = KeyCode.Space;
-    public KeyCode abilityKey = KeyCode.Mouse0;
 
     [Header("Ground Check")]
     public float playerHeight;
@@ -46,8 +48,11 @@ public class PlayerMovement : MonoBehaviour
     public enum MovementState
     {
         walking,
+        dashing,
         air
     }
+
+    public bool dashing;
 
     void Start()
     {
@@ -67,7 +72,7 @@ public class PlayerMovement : MonoBehaviour
         SpeedControl();
         StateHandler();
 
-        if (grounded)
+        if (state == MovementState.walking || state == MovementState.air)
             rb.drag = groundDrag;
         else
             rb.drag = 0;
@@ -91,25 +96,77 @@ public class PlayerMovement : MonoBehaviour
 
             Invoke(nameof(ResetJump), jumpCooldown);
         }
-
-        if (Input.GetKey(abilityKey) && readyToUseAbility)
-        {
-            readyToUseAbility = false;
-
-        }
     }
+
+    private float desiredMoveSpeed;
+    private float lastDesiredMoveSpeed;
+    private MovementState lastState;
+    bool keepMomentum;
 
     private void StateHandler()
     {
-        if (grounded)
+        if (dashing)
+        {
+            state = MovementState.dashing;
+            desiredMoveSpeed = dashSpeed;
+            speedChangeFactor = dashSpeedChangeFactor;
+        }
+        else if (grounded)
         {
             state = MovementState.walking;
-            moveSpeed = walkSpeed;
+            desiredMoveSpeed = walkSpeed;
+            readyToUseAbility = true;
         }
         else
         {
             state = MovementState.air;
+
+            if (desiredMoveSpeed < walkSpeed)
+                desiredMoveSpeed = walkSpeed;
         }
+
+        bool desiredMoveSpeedHasChanged = desiredMoveSpeed != lastDesiredMoveSpeed;
+        if (lastState == MovementState.dashing) keepMomentum = true;
+
+        if (desiredMoveSpeedHasChanged)
+        {
+            if (keepMomentum)
+            {
+                StopAllCoroutines();
+                StartCoroutine(SmoothlyLerpMoveSpeed());
+            }
+            else
+            {
+                StopAllCoroutines();
+                moveSpeed = desiredMoveSpeed;
+            }
+        }
+
+        lastDesiredMoveSpeed = desiredMoveSpeed;
+        lastState = state;
+    }
+
+    private float speedChangeFactor;
+    private IEnumerator SmoothlyLerpMoveSpeed()
+    {
+        float time = 0;
+        float difference = Mathf.Abs(desiredMoveSpeed - moveSpeed);
+        float startValue = moveSpeed;
+
+        float boostFactor = speedChangeFactor;
+
+        while (time < difference)
+        {
+            moveSpeed = Mathf.Lerp(startValue, desiredMoveSpeed, time / difference);
+
+            time += Time.deltaTime * boostFactor;
+
+            yield return null;
+        }
+
+        moveSpeed = desiredMoveSpeed;
+        speedChangeFactor = 1f;
+        keepMomentum = false;
     }
 
     private void MovePlayer()
