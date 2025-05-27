@@ -76,7 +76,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24c55cb56c7fa6344b11d9a83b2459b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 15
+  walkSpeed: 20
   dashSpeed: 40
   dashSpeedChangeFactor: 50
   groundDrag: 5
