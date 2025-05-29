@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -19,11 +20,14 @@ public class PlayerMovement : MonoBehaviour
     public float airMultiplier;
     bool readyToJump;
 
-    public Ability currentAbility;
-    [HideInInspector] public bool readyToUseAbility;
-
     [Header("Keys")]
     public KeyCode jumpKey = KeyCode.Space;
+    public KeyCode abilityKey = KeyCode.Mouse1;
+
+    [Header("Abilities")]
+    public Ability[] abilities;
+    public Ability currentAbility;
+    [HideInInspector] public bool readyToUseAbility;
 
     [Header("Ground Check")]
     public float playerHeight;
@@ -68,6 +72,7 @@ public class PlayerMovement : MonoBehaviour
     {
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, ground);
 
+        CheckAbility();
         MyInput();
         SpeedControl();
         StateHandler();
@@ -83,6 +88,26 @@ public class PlayerMovement : MonoBehaviour
         MovePlayer();
     }
 
+    private void CheckAbility()
+    {
+        if (!grounded) return;
+        else readyToUseAbility = true;
+
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, playerHeight * 0.5f + 0.2f))
+        {
+            switch (hit.transform.gameObject.tag)
+            {
+                case "Dash":
+                    currentAbility = abilities[0];
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
     private void MyInput()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
@@ -95,6 +120,11 @@ public class PlayerMovement : MonoBehaviour
             Jump();
 
             Invoke(nameof(ResetJump), jumpCooldown);
+        }
+
+        if (Input.GetKey(abilityKey) && readyToUseAbility)
+        {
+            UseAbility();
         }
     }
 
@@ -242,6 +272,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void UseAbility()
     {
-        currentAbility.useAbility(rb, orientation);
+        if (currentAbility == null) return;
+
+        currentAbility.useAbility();
+
+        readyToUseAbility = false;
     }
 }

@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Dashing : MonoBehaviour
+public class Dashing : Ability
 {
     [Header("References")]
     public Transform orientation;
     public Transform playerCam;
-    private Rigidbody rb;
-    private PlayerMovement pm;
+    public Rigidbody rb;
+    public PlayerMovement pm;
 
     [Header("Dashing")]
     public float dashForce;
@@ -22,25 +22,24 @@ public class Dashing : MonoBehaviour
     public float dashCooldown;
     private float dashCooldownTimer;
 
-    [Header("Input")]
-    public KeyCode dashKey = KeyCode.Mouse0;
-
-
     // Start is called before the first frame update
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        pm = GetComponent<PlayerMovement>();
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(dashKey))
-            Dash();
-
         if (dashCooldownTimer > 0 )
             dashCooldownTimer -= Time.deltaTime;
+    }
+
+    public override void useAbility()
+    {
+        base.useAbility();
+
+        Dash();
     }
 
     private void Dash()

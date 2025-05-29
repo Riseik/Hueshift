@@ -7,10 +7,8 @@ public class Grappling : Ability
 {
     public float grapplingForce;
 
-    public override void useAbility(Rigidbody rb, Transform orientation)
+    public override void useAbility()
     {
-        base.useAbility(rb, orientation);
-
-        rb.AddForce(transform.up * grapplingForce, ForceMode.Impulse);
+        base.useAbility();
     }
 }
