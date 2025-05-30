@@ -21,8 +21,9 @@ public class Finish : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            string currentScene = SceneManager.GetActiveScene().name;
-            SceneManager.LoadScene(currentScene);
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
     }
 }

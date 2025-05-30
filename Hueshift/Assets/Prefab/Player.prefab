@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2535361246454329312}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -85,6 +85,8 @@ MonoBehaviour:
   airMultiplier: 0.4
   jumpKey: 32
   abilityKey: 324
+  restartKey: 114
+  pauseKey: 27
   abilities:
   - {fileID: 1736357998530592269}
   currentAbility: {fileID: 0}

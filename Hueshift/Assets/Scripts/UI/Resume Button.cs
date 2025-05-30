@@ -22,6 +22,17 @@ public class ResumeButton : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         Time.timeScale = 1;
-        SceneManager.UnloadSceneAsync("Pause Menu");
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            Scene scene = SceneManager.GetSceneAt(i);
+
+            if (scene != SceneManager.GetActiveScene())
+            {
+                if (scene.isLoaded)
+                {
+                    SceneManager.UnloadSceneAsync(scene);
+                }
+            }
+        }
     }
 }
