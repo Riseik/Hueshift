@@ -80,7 +80,7 @@ MonoBehaviour:
   dashSpeed: 40
   dashSpeedChangeFactor: 50
   groundDrag: 5
-  jumpForce: 30
+  jumpForce: 40
   jumpCooldown: 0.25
   airMultiplier: 0.4
   jumpKey: 32

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -23,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Keys")]
     public KeyCode jumpKey = KeyCode.Space;
     public KeyCode abilityKey = KeyCode.Mouse1;
+    public KeyCode restartKey = KeyCode.R;
 
     [Header("Abilities")]
     public Ability[] abilities;
@@ -125,6 +127,12 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKey(abilityKey) && readyToUseAbility)
         {
             UseAbility();
+        }
+
+        if (Input.GetKey(restartKey))
+        {
+            string currentScene = SceneManager.GetActiveScene().name;
+            SceneManager.LoadScene(currentScene);
         }
     }
 
