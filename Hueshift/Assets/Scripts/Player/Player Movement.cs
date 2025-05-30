@@ -25,6 +25,9 @@ public class PlayerMovement : MonoBehaviour
     public KeyCode jumpKey = KeyCode.Space;
     public KeyCode abilityKey = KeyCode.Mouse1;
     public KeyCode restartKey = KeyCode.R;
+    public KeyCode pauseKey = KeyCode.Escape;
+
+    private bool pause;
 
     [Header("Abilities")]
     public Ability[] abilities;
@@ -72,6 +75,7 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        pause = Time.timeScale == 0;
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, ground);
 
         CheckAbility();
@@ -133,6 +137,14 @@ public class PlayerMovement : MonoBehaviour
         {
             string currentScene = SceneManager.GetActiveScene().name;
             SceneManager.LoadScene(currentScene);
+        }
+
+        if (Input.GetKey(pauseKey) && !pause)
+        {
+            Time.timeScale = 0;
+            SceneManager.LoadScene("Pause Menu", LoadSceneMode.Additive);
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
     }
 
